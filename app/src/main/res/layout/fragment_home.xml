@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    tools:context=".activity.MainActivity">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,7 +40,8 @@
             android:layout_width="@dimen/_30sdp"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_search" />
+            android:src="@drawable/ic_search"
+            />
     </LinearLayout>
     <TextView
         android:id="@+id/want_eat"
@@ -72,7 +73,9 @@
         android:id="@+id/img_random_meal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/accent"/>
+        android:background="@color/accent"
+        android:scaleType="centerCrop"/>
+
 
     </androidx.cardview.widget.CardView>
 
