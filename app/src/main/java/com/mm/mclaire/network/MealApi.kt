@@ -31,7 +31,6 @@ interface MealApi {
       fun getRandomMeal():Call<MealList>
     }
 
-
 //Singleton pattern:Only one instance of 'MealApi' will be used in the entire app
 object RetrofitInstance{
         val api: MealApi by lazy{
