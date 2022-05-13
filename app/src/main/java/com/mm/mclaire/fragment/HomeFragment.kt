@@ -1,31 +1,32 @@
 package com.mm.mclaire.fragment
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
+import com.mm.mclaire.activity.MealActivity
 import com.mm.mclaire.databinding.FragmentHomeBinding
-import com.mm.mclaire.network.RetrofitInstance
 import com.mm.mclaire.pojo.Meal
-import com.mm.mclaire.pojo.MealList
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.mm.mclaire.viewModel.HomeViewModel
 
 class HomeFragment : Fragment() {
-private  lateinit var binding:FragmentHomeBinding
+    private  lateinit var binding:FragmentHomeBinding
+    private  lateinit var homeMvvm:HomeViewModel
 
-//fragment has been instantiated & is in CREATED state
-//fragment corresponding view has not been created yet
+//fragment instantiated & is in CREATED state
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    // homeMvvm = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+    homeMvvm = ViewModelProviders.of(this)[HomeViewModel::class.java]
     }
 
-    //Fragment is in the CREATED state
-    //Where you inflate the fragments' layout
+    //inflate the fragments' layout
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding= FragmentHomeBinding.inflate(inflater,container,false)
         return binding.root}
@@ -33,30 +34,26 @@ private  lateinit var binding:FragmentHomeBinding
     //Bind specific views to properties by calling findViewById()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    homeMvvm.getRandomMeal()
+    observeRandomMeal()
+        onRandomMealClick()
+    }
 
-        //Retrofit call
-           RetrofitInstance.api.getRandomMeal().enqueue(object:Callback<MealList>{
+    private fun onRandomMealClick(){
+        binding.randomMealCard.setOnClickListener(){
+            val intent= Intent(activity,MealActivity::class.java )
+            startActivity(intent)
+        }
+    }
 
-               //onResponse is called when we successfully connect to the API
-               override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
-                  //if the body of the response has a value, we set that body to our random meal
-                   if(response.body()!=null){
-
-                       val randomMeal: Meal=response.body()!!.meals[0]
-                      // Log.d("testCV", "MEAL ID:${randomMeal.idMeal} NAME:${randomMeal.strMeal}")
-
-                       //Using GLIDE:Image Loader Library
-                       Glide.with(this@HomeFragment)
-                       .load(randomMeal.strMealThumb)
-                       .into(binding.imgRandomMeal)
-                   }else{
-                       return
-                   }
-               }
-
-               override fun onFailure(call: Call<MealList>, t: Throwable) {
-                   Log.d("HOME FRAGMENT",t.message.toString())
-               }
-           })
+    //listen to randomMealLiveData in this function
+    private fun observeRandomMeal() {
+        homeMvvm.observeRandomMealLiveData().observe(viewLifecycleOwner, object : Observer<Meal>{
+            override fun onChanged(t: Meal?) {
+                        Glide.with(this@HomeFragment)
+                            .load(t!!.strMealThumb)
+                            .into(binding.imgRandomMeal)
+            }
+        })
     }
 }
