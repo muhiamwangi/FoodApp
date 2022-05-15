@@ -13,6 +13,6 @@ object RetrofitInstance{
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl(BASE_URL)
             .build()
-           .create(MealApi::class.java)
+            .create(MealApi::class.java)
     }
 }
