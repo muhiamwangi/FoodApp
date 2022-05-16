@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.mm.mclaire.activity.MealActivity
+import com.mm.mclaire.adapters.PopularMealsAdapter
 import com.mm.mclaire.databinding.FragmentHomeBinding
+import com.mm.mclaire.pojo.CategoryMeals
 import com.mm.mclaire.pojo.Meal
 import com.mm.mclaire.viewModel.HomeViewModel
 
@@ -47,6 +50,24 @@ class HomeFragment : Fragment() {
         homeMvvm.getRandomMeal()
         observeRandomMeal()
         onRandomMealClick()
+
+        homeMvvm.getPopularMeals()
+        observePopularMealsLiveData()
+    }
+
+    private fun observePopularMealsLiveData() {
+        homeMvvm.observePopularMealsLiveData().observe(viewLifecycleOwner
+        ) { mealList->
+            //set mealList to adapter
+            binding.recViewMealsPopular.apply {
+                layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
+                 var popularItemsAdapter=PopularMealsAdapter()
+                adapter=popularItemsAdapter
+
+                //mealList in the lambda is a list but our function 'setMeals' in adapter takes an ArrayList --hence the need to cast
+                popularItemsAdapter.setMeals(mealList= mealList as ArrayList<CategoryMeals>)
+            }
+        }
     }
 
     private fun onRandomMealClick() {
