@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mm.mclaire.network.RetrofitInstance
+import com.mm.mclaire.pojo.CategoryList
+import com.mm.mclaire.pojo.CategoryMeals
 import com.mm.mclaire.pojo.Meal
 import com.mm.mclaire.pojo.MealList
 import retrofit2.Call
@@ -16,14 +18,15 @@ class HomeViewModel:ViewModel(){
     //mutableLiveData--->You can change its value
     //Its set to private since we only want it to be modified from this class only
     private var randomMealLiveData= MutableLiveData<Meal>()
+    private var popularMealsLiveData= MutableLiveData<List<CategoryMeals>>()
 
     fun getRandomMeal(){
             //retrofit instance
         RetrofitInstance.api.getRandomMeal().enqueue(object: Callback<MealList> {
-            //onResponse is called when we succesfully connect to the API
+            //onResponse is called when we successfully connect to the API
             override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
             //if the body of the response has a value, we set that body to our random meal
-                if(response.body()!=null){
+                if(response.body() != null){
                     val randomMeal: Meal =response.body()!!.meals[0]
             //setting the random meal to 'randomMealLiveData' which will be observed in HomeFragment
                 randomMealLiveData.value=randomMeal
@@ -44,4 +47,24 @@ class HomeViewModel:ViewModel(){
     fun observeRandomMealLiveData():LiveData<Meal>{
         return randomMealLiveData
     }
+
+
+    fun getPopularMeals(){
+        RetrofitInstance.api.getPopularMeals("Seafood").enqueue(object: Callback<CategoryList>{
+            override fun onResponse(call: Call<CategoryList>, response: Response<CategoryList>) {
+                if(response.body()!=null){
+                    popularMealsLiveData.value= response.body()!!.meals
+                }
+            }
+            override fun onFailure(call: Call<CategoryList>, t: Throwable) {
+                Log.d("HOME FRAGMENT",t.message.toString())
+            }
+        })
+    }
+    //FUNCTION IS USED TO OBSERVE popularMealSLiveData in our HomeFragment
+    //Livedata-->Cant change its value
+    fun observePopularMealsLiveData():LiveData<List<CategoryMeals>>{
+        return popularMealsLiveData
+    }
 }
+
