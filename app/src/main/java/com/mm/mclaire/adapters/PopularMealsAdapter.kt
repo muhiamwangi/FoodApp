@@ -5,14 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mm.mclaire.databinding.PopularMealBinding
-import com.mm.mclaire.pojo.CategoryMeals
+import com.mm.mclaire.pojo.CategoryMeal
 
 //Adapter is responsible for feeding content to the RV
 //RV uses adapter to figure out how to display data on to the screen
 //Adapter manages data to be displayed as well as the individual views used to display the data
 class PopularMealsAdapter():RecyclerView.Adapter<PopularMealsAdapter.PopularMealsViewholder>(){
-    private var mealsList=ArrayList<CategoryMeals>()
-    fun setMeals(mealList:ArrayList<CategoryMeals>){
+    //lambda for setting onPopularMealClick
+
+    lateinit var onItemClick:((CategoryMeal)->Unit)
+    private var mealsList=ArrayList<CategoryMeal>()
+    fun setMeals(mealList:ArrayList<CategoryMeal>){
         this.mealsList=mealList
         notifyDataSetChanged()
     }
@@ -23,6 +26,9 @@ class PopularMealsAdapter():RecyclerView.Adapter<PopularMealsAdapter.PopularMeal
     Glide.with(holder.itemView)
         .load(mealsList[position].strMealThumb)
         .into(holder.binding.imgPopularMeal)
+
+        holder.itemView.setOnClickListener {
+            onItemClick.invoke(mealsList[position]) }
     }
     override fun getItemCount()=mealsList.size
 

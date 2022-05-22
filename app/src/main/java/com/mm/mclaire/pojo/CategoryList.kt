@@ -1,5 +1,5 @@
 package com.mm.mclaire.pojo
 
 data class CategoryList(
-    val meals: List<CategoryMeals>
+    val meals: List<CategoryMeal>
 )

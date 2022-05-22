@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mm.mclaire.network.RetrofitInstance
 import com.mm.mclaire.pojo.CategoryList
-import com.mm.mclaire.pojo.CategoryMeals
+import com.mm.mclaire.pojo.CategoryMeal
 import com.mm.mclaire.pojo.Meal
 import com.mm.mclaire.pojo.MealList
 import retrofit2.Call
@@ -18,7 +18,7 @@ class HomeViewModel:ViewModel(){
     //mutableLiveData--->You can change its value
     //Its set to private since we only want it to be modified from this class only
     private var randomMealLiveData= MutableLiveData<Meal>()
-    private var popularMealsLiveData= MutableLiveData<List<CategoryMeals>>()
+    private var popularMealsLiveData= MutableLiveData<List<CategoryMeal>>()
 
     fun getRandomMeal(){
             //retrofit instance
@@ -48,7 +48,6 @@ class HomeViewModel:ViewModel(){
         return randomMealLiveData
     }
 
-
     fun getPopularMeals(){
         RetrofitInstance.api.getPopularMeals("Seafood").enqueue(object: Callback<CategoryList>{
             override fun onResponse(call: Call<CategoryList>, response: Response<CategoryList>) {
@@ -63,8 +62,7 @@ class HomeViewModel:ViewModel(){
     }
     //FUNCTION IS USED TO OBSERVE popularMealSLiveData in our HomeFragment
     //Livedata-->Cant change its value
-    fun observePopularMealsLiveData():LiveData<List<CategoryMeals>>{
+    fun observePopularMealsLiveData():LiveData<List<CategoryMeal>>{
         return popularMealsLiveData
     }
 }
-
