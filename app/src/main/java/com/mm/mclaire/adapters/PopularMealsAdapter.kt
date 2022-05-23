@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mm.mclaire.databinding.PopularMealBinding
-import com.mm.mclaire.pojo.CategoryMeal
+import com.mm.mclaire.pojo.MealsByCategory
 
 //Adapter is responsible for feeding content to the RV
 //RV uses adapter to figure out how to display data on to the screen
@@ -13,9 +13,9 @@ import com.mm.mclaire.pojo.CategoryMeal
 class PopularMealsAdapter():RecyclerView.Adapter<PopularMealsAdapter.PopularMealsViewholder>(){
     //lambda for setting onPopularMealClick
 
-    lateinit var onItemClick:((CategoryMeal)->Unit)
-    private var mealsList=ArrayList<CategoryMeal>()
-    fun setMeals(mealList:ArrayList<CategoryMeal>){
+    lateinit var onItemClick:((MealsByCategory)->Unit)
+    private var mealsList=ArrayList<MealsByCategory>()
+    fun setMeals(mealList:ArrayList<MealsByCategory>){
         this.mealsList=mealList
         notifyDataSetChanged()
     }
