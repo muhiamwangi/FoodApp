@@ -1,11 +1,9 @@
 package com.mm.mclaire.network
 
-import com.mm.mclaire.pojo.CategoryList
+import com.mm.mclaire.pojo.CategoriesList
+import com.mm.mclaire.pojo.MealsByCategoryList
 import com.mm.mclaire.pojo.MealList
-import com.squareup.moshi.Moshi
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -17,5 +15,8 @@ interface MealApi {
     fun getMealData(@Query("i") id: String): Call<MealList>
 
     @GET("filter.php?")
-    fun getPopularMeals(@Query("c") categoryName: String): Call<CategoryList>
+    fun getPopularMeals(@Query("c") categoryName: String): Call<MealsByCategoryList>
+
+    @GET("categories.php")
+    fun getCategories(): Call<CategoriesList>
 }

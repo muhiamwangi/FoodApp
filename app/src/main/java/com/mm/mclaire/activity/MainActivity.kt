@@ -97,5 +97,4 @@ findNavController().navigate(directions)
 
 - Navigation component includes additional navigation UI lib that has support for :Action Bar,
 Bottom Navigation,Navigation Drawers,ToolBars,OptionMenus  e.t.c
-
  */

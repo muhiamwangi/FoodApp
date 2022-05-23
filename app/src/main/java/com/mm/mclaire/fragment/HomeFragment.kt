@@ -2,17 +2,21 @@ package com.mm.mclaire.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.mm.mclaire.activity.MealActivity
+import com.mm.mclaire.adapters.CategoriesAdapter
 import com.mm.mclaire.adapters.PopularMealsAdapter
 import com.mm.mclaire.databinding.FragmentHomeBinding
-import com.mm.mclaire.pojo.CategoryMeal
+import com.mm.mclaire.pojo.MealsByCategory
 import com.mm.mclaire.pojo.Meal
 import com.mm.mclaire.viewModel.HomeViewModel
 
@@ -22,6 +26,7 @@ class HomeFragment : Fragment() {
     private lateinit var randomMeal: Meal
 
     var popularItemsAdapter=PopularMealsAdapter()
+    var categoryAdapter=CategoriesAdapter()
 
     companion object {
         const val MEAL_ID = "com.mm.mclaire.fragment.idMeal"
@@ -56,6 +61,10 @@ class HomeFragment : Fragment() {
         homeMvvm.getPopularMeals()
         observePopularMealsLiveData()
         onPopularItemClick()
+
+        prepareCategoriesRecyclerView()
+        homeMvvm.getCategories()
+        observeCategoryLiveData()
     }
 
     //observeRandomMeal() preferred approach
@@ -87,7 +96,7 @@ class HomeFragment : Fragment() {
                 adapter=popularItemsAdapter
 
                 //mealList in the lambda is a list but our function 'setMeals' in adapter takes an ArrayList --hence the need to cast
-                popularItemsAdapter.setMeals(mealList= mealList as ArrayList<CategoryMeal>)
+                popularItemsAdapter.setMeals(mealList= mealList as ArrayList<MealsByCategory>)
             }
         }
     }
@@ -101,7 +110,44 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
     }
+
+    private fun prepareCategoriesRecyclerView() {
+
+        binding.recViewCategory.apply {
+            categoryAdapter= CategoriesAdapter()
+            layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false
+            )
+        }
+        binding.recViewCategory.adapter = categoryAdapter;
+    }
+    //LIVEDATA
+    /**
+    -Data which we fetch from server can be LiveData
+    -We sent it to our HomeFragment where it can be observed
+    -Changes in data that is in the server/updates that take place will be observed and will be reflected
+    automatically on the activity
+    -We convert data to livedata and add observer to it
+    -Using livedata with view-models ensures that livedata-objects updates the UI in the viewmodel
+    thus the lifecycleOwners/UI Controllers will only be responsible of displaying data
+    -Here WE ARE ADDING AN OBSERVER TO THE LIVEDATA
+    -We attach observer object to Livedata using Observer fn
+    -Observer fn takes 2 params:
+    1. LIFECYCLE OWNER
+    2. OBSERVER Interface
+     */
+    private fun observeCategoryLiveData() {
+        homeMvvm.observeCategoryLiveData().observe(viewLifecycleOwner, Observer { categories->
+            categoryAdapter.setCategoryList(categories)
+        })
+    }
 }
+
+// .................................................................................................
+// categories.forEach{category ->
+//               Log.d("CATEGORY TEST", category.strCategory)}
+
+//..................................................................................................
+
 //observeRandomMeal() Version 1
 
     //listen to randomMealLiveData in this function
