@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.mm.mclaire.activity.MealActivity
 import com.mm.mclaire.adapters.PopularMealsAdapter
 import com.mm.mclaire.databinding.FragmentHomeBinding
-import com.mm.mclaire.pojo.CategoryMeals
+import com.mm.mclaire.pojo.CategoryMeal
 import com.mm.mclaire.pojo.Meal
 import com.mm.mclaire.viewModel.HomeViewModel
 
@@ -20,6 +20,8 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeMvvm: HomeViewModel
     private lateinit var randomMeal: Meal
+
+    var popularItemsAdapter=PopularMealsAdapter()
 
     companion object {
         const val MEAL_ID = "com.mm.mclaire.fragment.idMeal"
@@ -53,20 +55,16 @@ class HomeFragment : Fragment() {
 
         homeMvvm.getPopularMeals()
         observePopularMealsLiveData()
+        onPopularItemClick()
     }
 
-    private fun observePopularMealsLiveData() {
-        homeMvvm.observePopularMealsLiveData().observe(viewLifecycleOwner
-        ) { mealList->
-            //set mealList to adapter
-            binding.recViewMealsPopular.apply {
-                layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
-                 var popularItemsAdapter=PopularMealsAdapter()
-                adapter=popularItemsAdapter
-
-                //mealList in the lambda is a list but our function 'setMeals' in adapter takes an ArrayList --hence the need to cast
-                popularItemsAdapter.setMeals(mealList= mealList as ArrayList<CategoryMeals>)
-            }
+    //observeRandomMeal() preferred approach
+    private fun observeRandomMeal() {
+        homeMvvm.observeRandomMealLiveData().observe(viewLifecycleOwner ){ meal ->
+            Glide.with(this@HomeFragment)
+                .load(meal!!.strMealThumb)
+                .into(binding.imgRandomMeal)
+            this.randomMeal = meal
         }
     }
 
@@ -80,13 +78,27 @@ class HomeFragment : Fragment() {
         }
     }
 
-    //observeRandomMeal() preferred approach
-    private fun observeRandomMeal() {
-        homeMvvm.observeRandomMealLiveData().observe(viewLifecycleOwner ){ meal ->
-            Glide.with(this@HomeFragment)
-                .load(meal!!.strMealThumb)
-                .into(binding.imgRandomMeal)
-            this.randomMeal = meal
+    private fun observePopularMealsLiveData() {
+        homeMvvm.observePopularMealsLiveData().observe(viewLifecycleOwner
+        ) { mealList->
+            //set mealList to adapter
+            binding.recViewMealsPopular.apply {
+                layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
+                adapter=popularItemsAdapter
+
+                //mealList in the lambda is a list but our function 'setMeals' in adapter takes an ArrayList --hence the need to cast
+                popularItemsAdapter.setMeals(mealList= mealList as ArrayList<CategoryMeal>)
+            }
+        }
+    }
+
+    private fun onPopularItemClick() {
+        popularItemsAdapter.onItemClick =  {meal ->
+            val intent=Intent(activity,MealActivity::class.java)
+            intent.putExtra(MEAL_ID, meal.idMeal)
+            intent.putExtra(MEAL_NAME, meal.strMeal)
+            intent.putExtra(MEAL_THUMB, meal.strMealThumb)
+            startActivity(intent)
         }
     }
 }

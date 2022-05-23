@@ -3,9 +3,7 @@ package com.mm.mclaire.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mm.mclaire.R
 import com.mm.mclaire.databinding.ActivityMainBinding
